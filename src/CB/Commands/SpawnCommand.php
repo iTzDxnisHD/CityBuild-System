@@ -1,4 +1,3 @@
-
 <?php
 
 namespace CB\Commands;
@@ -9,8 +8,10 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\level\Level;
 use CB\main;
+use pocketmine\utils\Config;
 
 class SpawnCommand extends VanillaCommand {
+
     public $plugin;
 
     public function __construct(Main $plugin) {
@@ -18,16 +19,19 @@ class SpawnCommand extends VanillaCommand {
         parent::__construct("spawn", "Teleportiere dich zum Spawn", "/spawn");
     }
 
-    public function execute(CommandSender $sender, string $commandLabel, array $args) {
+    public function execute(CommandSender $sender, string $commandLabel, array $args)
+    {
         if ($sender instanceof Player) {
-            if ($sender->hasPermission("cb.spawn")) {
-                $welt = $this->getServer()->getLevelByName($this->config->get("CityBuild"));
-                $sender->teleport($welt->getSafeSpawn());
-                return true;
-        } else {
-            $sender->sendMessage($this->plugin->prefix. "§cDu hast nicht die nötigen Berechtigung, um diesen Command Auszuführen§7!");
-            return true;
+            if ($this->plugin->config instanceof Config) {
+                if ($sender->hasPermission("cb.spawn")) {
+                    $sender->teleport($this->plugin->getServer()->getDefaultLevel()->getSafeSpawn());
+                    return true;
+                } else {
+                    $sender->sendMessage($this->plugin->prefix . "§cDu hast nicht die nötigen Berechtigung, um diesen Command Auszuführen§7!");
+                    return true;
+                }
+            }
         }
-        }
+        return true;
     }
 }
