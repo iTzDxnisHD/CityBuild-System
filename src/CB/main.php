@@ -39,7 +39,7 @@ class main extends PluginBase implements Listener{
         $this->registerCommands();
     }
 
-    public function unregisterCommands() {
+    public function registerCommands() {
         $map = Server::getInstance()->getCommandMap();
         $map->unregister($map->getCommand("pocketmine:gamemode"));
         $map->register("day", new DayCommand($this));
@@ -54,7 +54,7 @@ class main extends PluginBase implements Listener{
         $map->register("night", new NightCommand($this));
     }
 
-    public function registerCommands() {
+    public function unregisterCommands() {
         $map = Server::getInstance()->getCommandMap();
         $map->unregister($map->getCommand("pocketmine:gamemode"));
     }
