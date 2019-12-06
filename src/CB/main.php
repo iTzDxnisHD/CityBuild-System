@@ -26,7 +26,7 @@ use pocketmine\network\mcpe\protocol\SetScorePacket;
 use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 use onebone\economyapi\EconomyAPI;
 
-class main extends PluginBase implements Listener{
+class main extends PluginBase implements Listener {
     
     public $prefix = "§l§3CityBuild §r§7» §f";
     public $config;
@@ -35,11 +35,12 @@ class main extends PluginBase implements Listener{
         $this->saveDefaultConfig();
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
         $this->getScheduler()->scheduleRepeatingTask(new ScoreBoardTask($this), 20);
+        $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->unregisterCommands();
         $this->registerCommands();
     }
 
-    public function unregisterCommands() {
+    public function registerCommands() {
         $map = Server::getInstance()->getCommandMap();
         $map->unregister($map->getCommand("pocketmine:gamemode"));
         $map->register("day", new DayCommand($this));
@@ -54,7 +55,7 @@ class main extends PluginBase implements Listener{
         $map->register("night", new NightCommand($this));
     }
 
-    public function registerCommands() {
+    public function unregisterCommands() {
         $map = Server::getInstance()->getCommandMap();
         $map->unregister($map->getCommand("pocketmine:gamemode"));
     }
