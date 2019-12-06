@@ -29,23 +29,34 @@ use onebone\economyapi\EconomyAPI;
 class main extends PluginBase implements Listener{
     
     public $prefix = "§l§3CityBuild §r§7» §f";
+    public $config;
     
     public function onEnable(): void{
         $this->saveDefaultConfig();
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
-        $this->config->getAll();
         $this->getScheduler()->scheduleRepeatingTask(new ScoreBoardTask($this), 20);
-        $cmdmap = $this->getServer()->getCommandMap();
-        $cmdmap->register("day", new DayCommand($this));
-        $cmdmap->register("gm", new GamemodeCommand($this));
-        $cmdmap->register("ping", new PingCommand($this));
-        $cmdmap->register("day", new DayCommand($this));
-        $cmdmap->register("gm", new GamemodeCommand($this));
-        $cmdmap->register("ping", new PingCommand($this));
-        $cmdmap->register("heal", new HealCommand($this));
-        $cmdmap->register("feed", new FeedCommand($this));
-        $cmdmap->register("spawn", new SpawnCommand($this));
-        $cmdmap->register("night", new NightCommand($this));
+        $this->unregisterCommands();
+        $this->registerCommands();
+    }
+
+    public function unregisterCommands() {
+        $map = Server::getInstance()->getCommandMap();
+        $map->unregister($map->getCommand("pocketmine:gamemode"));
+        $map->register("day", new DayCommand($this));
+        $map->register("gm", new GamemodeCommand($this));
+        $map->register("ping", new PingCommand($this));
+        $map->register("day", new DayCommand($this));
+        $map->register("gm", new GamemodeCommand($this));
+        $map->register("ping", new PingCommand($this));
+        $map->register("heal", new HealCommand($this));
+        $map->register("feed", new FeedCommand($this));
+        $map->register("spawn", new SpawnCommand($this));
+        $map->register("night", new NightCommand($this));
+    }
+
+    public function registerCommands() {
+        $map = Server::getInstance()->getCommandMap();
+        $map->unregister($map->getCommand("pocketmine:gamemode"));
     }
     
     public function setScoreboardEntry(Player $player, int $score, string $msg, string $objName)
@@ -95,7 +106,8 @@ class main extends PluginBase implements Listener{
         foreach ($pl as $player) {
             $name = $player->getName();
             $this->rmScoreboard($player, "objektName");
-            $money = EconomyAPI::getInstance()->myMoney($player);
+            $api = $this->getServer()->getPluginManager()->getPlugin("EconomyAPI");
+            $money = $api->myMoney($player);
 
             $this->createScoreboard($player, "§l§3CITYBUILD", "objektName");
             $this->setScoreboardEntry($player, 0, "   §e ", "objektName");
